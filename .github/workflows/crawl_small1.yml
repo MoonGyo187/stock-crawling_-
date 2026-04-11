@@ -2,7 +2,7 @@ name: 소형주1 크롤링
 
 on:
   schedule:
-    - cron: '0 */5 * * *'
+    - cron: '30 0,5,10,15,20 * * *'
   workflow_dispatch:
 
 permissions:
