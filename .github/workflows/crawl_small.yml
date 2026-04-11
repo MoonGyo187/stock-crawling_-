@@ -5,11 +5,12 @@ on:
     - cron: '0 */5 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   crawl:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
     - name: 저장소 체크아웃
@@ -57,7 +58,7 @@ jobs:
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
+        git pull --rebase
         git add data/*.xlsx
-        git diff --staged --quiet || (git commit -m "소형주 업데이트 $(date '+%Y-%m-%d %H:%M')" && git pull --rebase && git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }})
-      permissions:
-        contents: write
+        git diff --staged --quiet || git commit -m "소형주 업데이트 $(date '+%Y-%m-%d %H:%M')"
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
