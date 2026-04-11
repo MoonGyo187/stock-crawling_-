@@ -1,0 +1,60 @@
+name: 소형주 크롤링
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # 6시간마다
+  workflow_dispatch:
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 저장소 체크아웃
+      uses: actions/checkout@v3
+
+    - name: Python 설치
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: 라이브러리 설치
+      run: pip install requests pandas openpyxl beautifulsoup4
+
+    - name: 성호전자
+      run: python crawl.py 043260
+
+    - name: 대한광통신
+      run: python crawl.py 010170
+
+    - name: 우리기술
+      run: python crawl.py 032820
+
+    - name: 현대무벡스
+      run: python crawl.py 319400
+
+    - name: 미래에셋증권
+      run: python crawl.py 006800
+
+    - name: 오리엔트정공
+      run: python crawl.py 065500
+
+    - name: 코아스
+      run: python crawl.py 071950
+
+    - name: 형지글로벌
+      run: python crawl.py 308100
+
+    - name: 아센디오
+      run: python crawl.py 012170
+
+    - name: 중앙첨단소재
+      run: python crawl.py 051980
+
+    - name: 결과 저장
+      run: |
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+        git add data/*.xlsx
+        git diff --staged --quiet || git commit -m "소형주 업데이트 $(date '+%Y-%m-%d %H:%M')"
+        git push
