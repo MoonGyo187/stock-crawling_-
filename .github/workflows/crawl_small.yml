@@ -2,8 +2,8 @@ name: 소형주 크롤링
 
 on:
   schedule:
-    - cron: '0 */5 * * *'  # 5시간마다
-  workflow_dispatch:
+    - cron: '0 */5 * * *'  # 5시간마다 자동 실행
+  workflow_dispatch:      # 수동 실행 버튼 활성화
 
 jobs:
   crawl:
@@ -11,50 +11,54 @@ jobs:
 
     steps:
     - name: 저장소 체크아웃
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Python 설치
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
     - name: 라이브러리 설치
       run: pip install requests pandas openpyxl beautifulsoup4
 
-    - name: 성호전자
+    - name: 데이터 폴더 생성
+      run: mkdir -p data
+
+    - name: 성호전자 수집
       run: python crawl.py 043260
 
-    - name: 대한광통신
+    - name: 대한광통신 수집
       run: python crawl.py 010170
 
-    - name: 우리기술
+    - name: 우리기술 수집
       run: python crawl.py 032820
 
-    - name: 현대무벡스
+    - name: 현대무벡스 수집
       run: python crawl.py 319400
 
-    - name: 미래에셋증권
+    - name: 미래에셋증권 수집
       run: python crawl.py 006800
 
-    - name: 오리엔트정공
+    - name: 오리엔트정공 수집
       run: python crawl.py 065500
 
-    - name: 코아스
+    - name: 코아스 수집
       run: python crawl.py 071950
 
-    - name: 형지글로벌
+    - name: 형지글로벌 수집
       run: python crawl.py 308100
 
-    - name: 아센디오
+    - name: 아센디오 수집
       run: python crawl.py 012170
 
-    - name: 중앙첨단소재
+    - name: 중앙첨단소재 수집
       run: python crawl.py 051980
 
-    - name: 결과 저장
+    - name: 결과 저장 및 푸시
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
         git add data/*.xlsx
-        git diff --staged --quiet || git commit -m "소형주 업데이트 $(date '+%Y-%m-%d %H:%M')"
-        git push
+        git diff --staged --quiet || (git commit -m "소형주 업데이트 $(date '+%Y-%m-%d %H:%M')" && git push)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
