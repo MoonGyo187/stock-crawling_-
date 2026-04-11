@@ -37,8 +37,7 @@ jobs:
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
-        git fetch origin
-        git reset --hard origin/main
+        git pull --rebase origin main || true
         git add data/*.xlsx
-        git diff --staged --quiet || git commit -m "대형주 업데이트 $(date '+%Y-%m-%d %H:%M')"
+        git diff --staged --quiet || git commit -m "업데이트 $(date '+%Y-%m-%d %H:%M')"
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
