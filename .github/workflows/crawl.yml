@@ -2,8 +2,8 @@ name: 주식 크롤링
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 매일 한국시간 오전 9시 (UTC 0시)
-  workflow_dispatch:  # 수동 실행도 가능
+    - cron: '0 */3 * * *'  # 3시간마다
+  workflow_dispatch:
 
 jobs:
   crawl:
@@ -27,10 +27,13 @@ jobs:
     - name: SK하이닉스 크롤링
       run: python crawl.py 000660
 
+    - name: 현대차 크롤링
+      run: python crawl.py 005380
+
     - name: 결과 저장
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
-        git add *.xlsx
-        git diff --staged --quiet || git commit -m "데이터 업데이트 $(date '+%Y-%m-%d')"
+        git add data/*.xlsx
+        git diff --staged --quiet || git commit -m "데이터 업데이트 $(date '+%Y-%m-%d %H:%M')"
         git push
