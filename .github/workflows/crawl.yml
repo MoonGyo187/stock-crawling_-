@@ -1,4 +1,4 @@
-name: 주식 크롤링
+name: 대형주 크롤링
 
 on:
   schedule:
@@ -21,13 +21,13 @@ jobs:
     - name: 라이브러리 설치
       run: pip install requests pandas openpyxl beautifulsoup4
 
-    - name: 삼성전자 크롤링
+    - name: 삼성전자
       run: python crawl.py 005930
 
-    - name: SK하이닉스 크롤링
+    - name: SK하이닉스
       run: python crawl.py 000660
 
-    - name: 현대차 크롤링
+    - name: 현대차
       run: python crawl.py 005380
 
     - name: 결과 저장
@@ -35,5 +35,5 @@ jobs:
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
         git add data/*.xlsx
-        git diff --staged --quiet || git commit -m "데이터 업데이트 $(date '+%Y-%m-%d %H:%M')"
+        git diff --staged --quiet || git commit -m "대형주 업데이트 $(date '+%Y-%m-%d %H:%M')"
         git push
