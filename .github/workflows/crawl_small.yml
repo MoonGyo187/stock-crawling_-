@@ -2,7 +2,7 @@ name: 소형주 크롤링
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # 6시간마다
+    - cron: '0 */5 * * *'  # 5시간마다
   workflow_dispatch:
 
 jobs:
