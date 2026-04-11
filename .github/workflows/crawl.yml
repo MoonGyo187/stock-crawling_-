@@ -2,8 +2,8 @@ name: 대형주 크롤링
 
 on:
   schedule:
-    - cron: '0 */3 * * *'  # 3시간마다 자동 실행
-  workflow_dispatch:      # 수동 실행 버튼 활성화
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
 
 jobs:
   crawl:
@@ -11,34 +11,31 @@ jobs:
 
     steps:
     - name: 저장소 체크아웃
-      uses: actions/checkout@v4  # 최신 버전으로 업데이트됨
+      uses: actions/checkout@v4
 
     - name: Python 설치
-      uses: actions/setup-python@v5  # 최신 버전으로 업데이트됨
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
     - name: 라이브러리 설치
       run: pip install requests pandas openpyxl beautifulsoup4
 
-    - name: 데이터 폴더 생성
-      run: mkdir -p data
-
-    - name: 삼성전자 수집
+    - name: 삼성전자
       run: python crawl.py 005930
 
-    - name: SK하이닉스 수집
+    - name: SK하이닉스
       run: python crawl.py 000660
 
-    - name: 현대차 수집
+    - name: 현대차
       run: python crawl.py 005380
 
-    - name: 결과 저장 및 푸시
+    - name: 결과 저장
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
         git add data/*.xlsx
-        # 변경사항이 있을 때만 커밋
-        git diff --staged --quiet || (git commit -m "대형주 업데이트 $(date '+%Y-%m-%d %H:%M')" && git push)
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        git diff --staged --quiet || git commit -m "대형주 업데이트 $(date '+%Y-%m-%d %H:%M')"
+        git push
