@@ -158,3 +158,4 @@ if new_posts:
     print(f"💾 저장: {EXISTING_FILE}")
 else:
     print("\n✅ 새로운 게시글 없음!")
+    sys.exit(0)
