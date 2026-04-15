@@ -96,6 +96,9 @@ def get_post_detail(nid):
             content_html = result.get("contentHtml", "")
             soup = BeautifulSoup(content_html, "html.parser")
             content = soup.get_text(separator="\n", strip=True)
+            # 엑셀 저장 불가 특수문자 제거
+        import re
+        content = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', content)
         return content, result.get("viewCount", 0), result.get("recommendCount", 0), result.get("notRecommendCount", 0)
     except:
         return "", 0, 0, 0
