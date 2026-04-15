@@ -45,6 +45,9 @@ if os.path.exists(EXISTING_FILE):
     df_old = pd.read_excel(EXISTING_FILE)
     if "nid" in df_old.columns:
         existing_nids = set(df_old["nid"].astype(str))
+    for col in ["제목", "내용", "제목+내용"]:
+        if col in df_old.columns:
+            df_old[col] = df_old[col].apply(lambda x: clean_text(x) if isinstance(x, str) else x)
     print(f"✅ 기존 데이터 {len(df_old)}개 로드")
 else:
     print("✅ 새로 시작")
