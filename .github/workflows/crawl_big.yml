@@ -33,11 +33,14 @@ jobs:
     - name: 현대차
       run: python crawl.py 005380
 
-    - name: 결과 저장
+    - - name: 결과 저장
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
-        git pull --rebase origin main || true
         git add data/*.xlsx
-        git diff --staged --quiet || git commit -m "업데이트 $(date '+%Y-%m-%d %H:%M')"
+        git stash
+        git pull --rebase origin main || true
+        git stash pop || true
+        git add data/*.xlsx
+        git diff --staged --quiet || git commit -m "대형주 업데이트 $(date '+%Y-%m-%d %H:%M')"
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
