@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 # ============================
 # ⚙️ 설정
 # ============================
-STOCK_CODE = sys.argv[1]  # 실행 시 종목코드 받기
+STOCK_CODE = sys.argv[1]
 DATA_DIR = "data"
 os.makedirs(DATA_DIR, exist_ok=True)
 EXISTING_FILE = f"{DATA_DIR}/naver_board_{STOCK_CODE}.xlsx"
@@ -25,6 +25,11 @@ API_HEADERS = {
     "Referer": "https://m.stock.naver.com/",
     "Accept": "application/json",
 }
+
+def clean_text(text):
+    if not isinstance(text, str):
+        return text
+    return re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', text)
 
 session = requests.Session()
 session.get("https://finance.naver.com", headers=HEADERS)
@@ -64,7 +69,7 @@ def parse_posts(soup):
             continue
         posts.append({
             "날짜시간": date_text,
-            "제목": a_tag.get_text(strip=True),
+            "제목": clean_text(a_tag.get_text(strip=True)),
             "nid": int(nid_match.group(1)),
         })
     return posts
@@ -96,9 +101,7 @@ def get_post_detail(nid):
             content_html = result.get("contentHtml", "")
             soup = BeautifulSoup(content_html, "html.parser")
             content = soup.get_text(separator="\n", strip=True)
-            # 엑셀 저장 불가 특수문자 제거
-        import re
-        content = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', content)
+        content = clean_text(content)
         return content, result.get("viewCount", 0), result.get("recommendCount", 0), result.get("notRecommendCount", 0)
     except:
         return "", 0, 0, 0
@@ -131,7 +134,7 @@ for page in range(1, 101):
         post["추천수"] = recommend
         post["비추천수"] = not_recommend
         post["조회수"] = views
-        post["제목+내용"] = post["제목"] + " " + content
+        post["제목+내용"] = clean_text(post["제목"] + " " + content)
         new_posts.append(post)
         print(f"  ✅ {post['날짜시간']} | {post['제목'][:20]}")
         time.sleep(DELAY)
