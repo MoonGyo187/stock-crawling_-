@@ -14,7 +14,7 @@ STOCK_CODE = sys.argv[1]
 DATA_DIR = "data"
 os.makedirs(DATA_DIR, exist_ok=True)
 EXISTING_FILE = f"{DATA_DIR}/naver_board_{STOCK_CODE}.xlsx"
-DELAY = 0.5
+DELAY = 1.0
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
